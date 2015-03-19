@@ -23,6 +23,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
@@ -30,6 +31,7 @@ import javax.swing.DropMode;
 import javax.swing.JList;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.JTextPane;
 import javax.swing.JButton;
@@ -45,6 +47,7 @@ import javax.swing.JMenuItem;
 import java.awt.Toolkit;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.awt.Component;
 
 public class TimeGUI extends JFrame {
 
@@ -207,12 +210,71 @@ public class TimeGUI extends JFrame {
 		lblNewLabel_1.setIcon(new ImageIcon(TimeGUI.class.getResource("/ch/roethli/timeclock/java/gui_title_bg.PNG")));
 		lblNewLabel_1.setBounds(269, 36, 327, 27);
 		contentPane.add(lblNewLabel_1);
-		JList list = new JList(listModel);
+		final JList list = new JList(listModel);
+		
 		list.setForeground(Color.WHITE);
 		list.setFont(new Font("Tahoma", Font.BOLD, 13));
 		list.setBackground(Color.GRAY);
 		list.setBounds(269, 64, 327, 217);
 		contentPane.add(list);
+		
+		final JPopupMenu popupMenu = new JPopupMenu();
+		addPopup(list, popupMenu);
+		
+		JMenuItem mntmLschenMan = new JMenuItem("L\u00F6schen man!");
+		mntmLschenMan.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				listModel.remove(list.getSelectedIndex());
+				
+				for(int i=0;i<timelist.size();i++) { 
+							      
+							    if(listModel.get(i).equals(list) ) 
+							    		{  
+							    	  listModel.remove(i);
+							        i--; 
+							      
+							       
+						    } 
+							} 
+
+				
+			}
+		});
+		mntmLschenMan.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				popupMenu.setVisible(true);
+				
+			}
+		});
+		popupMenu.add(mntmLschenMan);
+		
+
+list.addMouseListener(new MouseAdapter() {
+
+
+      public void mouseReleased(MouseEvent evt) {
+
+
+         if (evt.isPopupTrigger()) {
+
+
+            showMenu(evt);
+
+
+     }
+
+
+       }
+
+
+  });
+
+
+
+
 		
 		JButton btnEintragen = new JButton("Eintragen");
 		btnEintragen.addActionListener(new ActionListener() {
@@ -242,5 +304,29 @@ public class TimeGUI extends JFrame {
 		
 		
 		
+	}
+	
+	public void showMenu(MouseEvent evt){
+
+
+	
+
+		}
+	private static void addPopup(Component component, final JPopupMenu popup) {
+		component.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			private void showMenu(MouseEvent e) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
 	}
 }
